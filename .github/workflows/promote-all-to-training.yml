@@ -5,7 +5,7 @@ on:
 
 env:
   IMAGE_REGISTRY: ${{ vars.DOCKER_REGISTRY }}
-  IMAGE_CURRENT_ENV_TAG: test
+  IMAGE_CURRENT_ENV_TAG: test-sup
   IMAGE_PROMOTE_ENV_TAG: training
   IMAGE_PROMOTE_ENV_BACKUP_TAG: training-backup
 

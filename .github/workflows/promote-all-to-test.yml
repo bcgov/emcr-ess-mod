@@ -5,9 +5,9 @@ on:
 
 env:
   IMAGE_REGISTRY: ${{ vars.DOCKER_REGISTRY }}
-  IMAGE_CURRENT_ENV_TAG: latest
-  IMAGE_PROMOTE_ENV_TAG: test
-  IMAGE_PROMOTE_ENV_BACKUP_TAG: test-backup
+  IMAGE_CURRENT_ENV_TAG: dev-sup
+  IMAGE_PROMOTE_ENV_TAG: test-sup
+  IMAGE_PROMOTE_ENV_BACKUP_TAG: test-sup-backup
 
 jobs:
   promote-all-images-to-test:

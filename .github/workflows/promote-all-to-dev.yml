@@ -1,17 +1,17 @@
-name: promote-all-to-prod
+name: promote-all-to-dev
 
 on:
   workflow_dispatch:
 
 env:
   IMAGE_REGISTRY: ${{ vars.DOCKER_REGISTRY }}
-  IMAGE_CURRENT_ENV_TAG: test-sup
-  IMAGE_PROMOTE_ENV_TAG: prod
-  IMAGE_PROMOTE_ENV_BACKUP_TAG: prod-backup
+  IMAGE_CURRENT_ENV_TAG: latest
+  IMAGE_PROMOTE_ENV_TAG: dev-sup
+  IMAGE_PROMOTE_ENV_BACKUP_TAG: dev-sup-backup
 
 jobs:
-  promote-all-images-to-test:
-    name: Promote all Docker images to prod
+  promote-all-images-to-dev:
+    name: Promote all Docker images to dev
     runs-on: ubuntu-latest
     if: github.repository_owner == 'bcgov'
 
