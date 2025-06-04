@@ -8,6 +8,15 @@ on:
         required: true
         default: 'master'
 
+  push:
+    paths:
+      - 'registrants/**'
+
+  pull_request:
+    types: [opened, reopened, edited, synchronize, closed]
+    paths:
+      - 'registrants/**'
+
 jobs:
   build-api:
     permissions:
