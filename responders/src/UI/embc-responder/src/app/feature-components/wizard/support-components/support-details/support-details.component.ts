@@ -120,7 +120,7 @@ export class SupportDetailsComponent implements OnInit, OnDestroy {
   supportListSubscription: Subscription;
   supportLimits: any;
   supportLimitsSubscription: Subscription;
-  userService: any;
+  userService: UserService;
 
   constructor(
     private router: Router,
