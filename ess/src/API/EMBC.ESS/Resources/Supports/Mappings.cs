@@ -38,7 +38,7 @@ namespace EMBC.ESS.Resources.Supports
                     FirstName = h.era_firstname,
                     LastName = h.era_lastname
                 })))
-               
+
                 .ForMember(d => d.SupportDelivery, opts => opts.MapFrom(s => s))
                 .ForMember(d => d.Flags, opts => opts.MapFrom(s => s.era_era_evacueesupport_era_supportflag_EvacueeSupport))
                 .ForMember(d => d.IsSelfServe, opts => opts.MapFrom(s => s.era_selfservesupport))
@@ -60,7 +60,7 @@ namespace EMBC.ESS.Resources.Supports
                 .IncludeMembers(s => s.SupportDelivery as Referral, s => s.SupportDelivery as Interac)
                 // support delivery must be mapped at this level, can't be at the included mapping
                 .ForMember(d => d.era_supportdeliverytype, opts => opts.MapFrom(s => resolveSupportDelieveryType(s.SupportDelivery)))
-                .ForSourceMember(s => s.HouseholdMembers, opts => opts.DoNotValidate()) 
+                .ForSourceMember(s => s.HouseholdMembers, opts => opts.DoNotValidate())
                 .ForSourceMember(s => s.SupportDelivery, opts => opts.DoNotValidate())
                 .ForSourceMember(s => s.IncludedHouseholdMembers, opts => opts.DoNotValidate())
                 .ForSourceMember(s => s.Status, opts => opts.DoNotValidate())
@@ -252,6 +252,25 @@ namespace EMBC.ESS.Resources.Supports
                 .ValidateMemberList(MemberList.Source)
                 .ForSourceMember(s => s.DuplicatedSupportId, opts => opts.DoNotValidate())
                 .ForMember(d => d._era_flagtype_value, opts => opts.MapFrom(s => DuplicateSupportFlag.FlagTypeId))
+                ;
+
+            // New mapping for era_supportconflictmessage to ConflictMessage
+            CreateMap<era_supportconflictmessage, ConflictMessage>()
+                .ForMember(d => d.EssTask, opts => opts.MapFrom(s => s.era_ESSTask))
+                //.ForMember(d => d.EvacuationFile, opts => opts.MapFrom(s => s.era_ESSFile))
+                .ForMember(d => d.MatchedEvacueeSupport, opts => opts.MapFrom(s => s.era_EvacueeSupport))
+                //.ForMember(d => d.MatchedEvacuationFile, opts => opts.MapFrom(s => s.era_MatchedESSFile))
+                //.ForMember(d => d.Evacuee, opts => opts.MapFrom(s => s.era_Registrant))
+                .ForMember(d => d.Responder, opts => opts.MapFrom(s => s.era_Responder))
+                .ForMember(d => d.EvacueeDOB, opts => opts.MapFrom(s => s.era_evacueedob))
+                .ForMember(d => d.EvacueeName, opts => opts.MapFrom(s => s.era_evacueename))
+                .ForMember(d => d.MatchedDOB, opts => opts.MapFrom(s => s.era_matcheddob))
+                .ForMember(d => d.MatchedName, opts => opts.MapFrom(s => s.era_matchedname))
+                .ForMember(d => d.EvacueeName, opts => opts.MapFrom(s => s.era_name))
+                .ForMember(d => d.Scenario, opts => opts.MapFrom(s => s.era_scenario))
+                //.ForMember(d => d.NameMatchScore, opts => opts.MapFrom(s => s.))
+
+                .ReverseMap()
                 ;
         }
     }

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using EMBC.ESS.Resources.Evacuations;
+using EMBC.ESS.Resources.Tasks;
+using EMBC.ESS.Resources.Teams;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
@@ -337,6 +340,43 @@ public record Support
     public string LodgingEmail { get; set; }
 }
 
+public record ConflictMessage
+{
+    [Display(Name = "Task")]
+    public EssTask EssTask { get; set; }
+
+    //[Display(Name = "ESS File")]
+    //public EvacuationFile EvacuationFile { get; set; }
+
+    //[Display(Name = "Evacuee")]
+    //public Evacuee Evacuee { get; set; }
+
+    [Display(Name = "Evacuee Name")]
+    public string EvacueeName { get; set; }
+
+    [Display(Name = "Evacuee DOB")]
+    public string EvacueeDOB { get; set; }
+
+    [Display(Name = "Responder")]
+    public TeamMember Responder { get; set; }
+
+    [Display(Name = "Scenario")]
+    public ConflictMessageScenario Scenario { get; set; }
+
+    //[Display(Name = "Matched File")]
+    //public EvacuationFile MatchedEvacuationFile { get; set; }
+
+    [Display(Name = "Matched Name")]
+    public string MatchedName { get; set; }
+
+    [Display(Name = "Matched DOB")]
+    public string MatchedDOB { get; set; }
+    // [Display(Name = "Name match Score")]
+    // public decimal NameMatchScore { get; set; }
+    [Display(Name = "Evacuee Support")]
+    public Support EvacueeSupport { get; set; }
+
+}
 #pragma warning disable CA1008 // Enums should have zero value
 
 public enum EvacuationFileStatus
@@ -378,4 +418,12 @@ public enum InsuranceOption
     Yes,
     Unsure,
     Unknown
+}
+
+public enum ConflictMessageScenario
+{
+    ExactMatchSameFile = 174360000,
+    ExactMatchOnDifferentEssFile = 174360001,
+    PartialMatchSameFile = 174360002,
+    PartialMatchOnDifferentEssFile = 174360003
 }
