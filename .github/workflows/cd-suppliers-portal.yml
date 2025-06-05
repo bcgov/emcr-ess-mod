@@ -8,6 +8,15 @@ on:
         required: true
         default: 'master'
 
+  push:
+    paths:
+      - 'suppliers/**'
+
+  pull_request:
+    types: [opened, reopened, edited, synchronize, closed]
+    paths:
+      - 'suppliers/**'
+
 jobs:
   build-api:
     permissions:

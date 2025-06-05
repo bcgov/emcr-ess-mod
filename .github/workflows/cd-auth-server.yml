@@ -8,6 +8,15 @@ on:
         required: true
         default: 'master'
 
+  push:
+    paths:
+      - 'oauth-server/**'
+
+  pull_request:
+    types: [opened, reopened, edited, synchronize, closed]
+    paths:
+      - 'oauth-server/**'
+
 jobs:
   build:
     permissions:
