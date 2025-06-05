@@ -19,6 +19,7 @@ export { EvacuationFileStatus } from './models/evacuation-file-status';
 export { EvacuationFileSummary } from './models/evacuation-file-summary';
 export { EvacuationFileTask } from './models/evacuation-file-task';
 export { EvacuationFileTaskFeature } from './models/evacuation-file-task-feature';
+export { FeatureFlagConfiguration } from './models/feature-flag-configuration';
 export { FoodGroceriesSupport } from './models/food-groceries-support';
 export { FoodRestaurantSupport } from './models/food-restaurant-support';
 export { GetSecurityPhraseResponse } from './models/get-security-phrase-response';

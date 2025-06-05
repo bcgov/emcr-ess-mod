@@ -1,3 +1,18 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh; /* or whatever fits your design */
+  overflow: hidden;
+}
+
+.scrollable-container {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding-right: 1rem;
+  margin-bottom: 1rem;
+  max-height: 60vh;
+}
+
 .button-width {
   min-width: 40%;
 }

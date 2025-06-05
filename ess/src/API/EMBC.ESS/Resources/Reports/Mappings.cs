@@ -279,6 +279,25 @@ namespace EMBC.ESS.Resources.Reports
                 .ForMember(d => d.LodgingContactNumber, opts => opts.MapFrom(s => s.era_lodgingcontactnumber))
                 .ForMember(d => d.LodgingEmail, opts => opts.MapFrom(s => s.era_lodgingemailaddress))
                 ;
+
+
+
+            // New mapping for era_supportconflictmessage to ConflictMessage
+            CreateMap<era_supportconflictmessage, ConflictMessage>()
+            .ForMember(d => d.EssTask, opts => opts.MapFrom(s => s.era_ESSTask))
+            //.ForMember(d => d.EvacuationFile, opts => opts.MapFrom(s => s.era_ESSFile))
+            .ForMember(d => d.EvacueeSupport, opts => opts.MapFrom(s => s.era_EvacueeSupport))
+            //.ForMember(d => d.MatchedEvacuationFile, opts => opts.MapFrom(s => s.era_MatchedESSFile))
+            //.ForMember(d => d.Evacuee, opts => opts.MapFrom(s => s.era_Registrant))
+            .ForMember(d => d.Responder, opts => opts.MapFrom(s => s.era_Responder))
+            .ForMember(d => d.EvacueeDOB, opts => opts.MapFrom(s => s.era_evacueedob))
+            .ForMember(d => d.EvacueeName, opts => opts.MapFrom(s => s.era_evacueename))
+            .ForMember(d => d.MatchedDOB, opts => opts.MapFrom(s => s.era_matcheddob))
+            .ForMember(d => d.MatchedName, opts => opts.MapFrom(s => s.era_matchedname))
+            // .ForMember(d => d.nam, opts => opts.MapFrom(s => s.era_name))
+
+            .ForMember(d => d.Scenario, opts => opts.MapFrom(s => s.era_scenario))
+            .ReverseMap();
         }
     }
 

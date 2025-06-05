@@ -71,6 +71,11 @@ namespace EMBC.Responders.API.Controllers
                 {
                     SessionTimeoutInMinutes = configuration.GetValue<int>("timeout:minutes", 20),
                     WarningMessageDuration = configuration.GetValue<int>("timeout:warningDuration", 1)
+                },
+                FeatureFlags = new FeatureFlagConfiguration
+                {
+                    SameFileDuplicateDetection = !string.IsNullOrEmpty(configuration["features:SAMEFILE_DUPLICATEDETECTION"]),
+                    DifferentFileDuplicateDetection = !string.IsNullOrEmpty(configuration["features:DIFFERENTFILE_DUPLICATEDETECTION"])
                 }
             };
 
@@ -210,6 +215,7 @@ namespace EMBC.Responders.API.Controllers
         public OidcConfiguration Oidc { get; set; }
         public OutageInformation OutageInfo { get; set; }
         public TimeoutConfiguration TimeoutInfo { get; set; }
+        public FeatureFlagConfiguration FeatureFlags { get; set; }
     }
 
     public class OidcConfiguration
@@ -247,6 +253,12 @@ namespace EMBC.Responders.API.Controllers
     {
         public int SessionTimeoutInMinutes { get; set; }
         public int WarningMessageDuration { get; set; }
+    }
+
+    public class FeatureFlagConfiguration
+    {
+        public bool SameFileDuplicateDetection { get; set; }
+        public bool DifferentFileDuplicateDetection { get; set; }
     }
 
     public class VersionInformation
