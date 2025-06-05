@@ -62,9 +62,6 @@ jobs:
             type=ref,event=tag
             latest
 
-      - name: Show Docker tags to be used
-        run: echo "${{ steps.meta.outputs.tags }}"
-
       - name: Build and push Docker image
         id: build-and-push
         uses: docker/build-push-action@v6
