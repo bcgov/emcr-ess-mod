@@ -11,7 +11,7 @@ jobs:
       runs-on: ubuntu-latest
       steps:
       - name: UI
-        uses: zaproxy/action-full-scan@v0.11.0
+        uses: zaproxy/action-full-scan@v0.12.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           target: 'https://dev-prj-era-responders.apps.silver.devops.gov.bc.ca'
@@ -29,7 +29,7 @@ jobs:
       runs-on: ubuntu-latest
       steps:
       - name: UI
-        uses: zaproxy/action-full-scan@v0.11.0
+        uses: zaproxy/action-full-scan@v0.12.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           target: 'https://dev-prj-era-evacuees.apps.silver.devops.gov.bc.ca'
@@ -47,7 +47,7 @@ jobs:
       runs-on: ubuntu-latest
       steps:
       - name: UI
-        uses: zaproxy/action-full-scan@v0.11.0
+        uses: zaproxy/action-full-scan@v0.12.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           target: 'https://dev-prj-era-suppliers.apps.silver.devops.gov.bc.ca'
@@ -65,7 +65,7 @@ jobs:
       runs-on: ubuntu-latest
       steps:
       - name: Server
-        uses: zaproxy/action-full-scan@v0.11.0
+        uses: zaproxy/action-full-scan@v0.12.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           target: 'https://dev-prj-era-oauth.apps.silver.devops.gov.bc.ca'
