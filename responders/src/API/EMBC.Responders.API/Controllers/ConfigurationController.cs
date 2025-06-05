@@ -9,6 +9,7 @@ using AutoMapper;
 using EMBC.ESS.Shared.Contracts.Metadata;
 using EMBC.Utilities.Caching;
 using EMBC.Utilities.Extensions;
+using EMBC.Utilities.Hosting;
 using EMBC.Utilities.Messaging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -74,8 +75,8 @@ namespace EMBC.Responders.API.Controllers
                 },
                 FeatureFlags = new FeatureFlagConfiguration
                 {
-                    SameFileDuplicateDetection = !string.IsNullOrEmpty(configuration["features:SAMEFILE_DUPLICATEDETECTION"]),
-                    DifferentFileDuplicateDetection = !string.IsNullOrEmpty(configuration["features:DIFFERENTFILE_DUPLICATEDETECTION"])
+                    SameFileDuplicateDetection = !string.IsNullOrEmpty(configuration[FeatureFlagKeys.SameFileDuplicateDetection]),
+                    DifferentFileDuplicateDetection = !string.IsNullOrEmpty(configuration[FeatureFlagKeys.DifferentFileDuplicateDetection])
                 }
             };
 

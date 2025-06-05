@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
+using EMBC.Utilities.Hosting;
 
 namespace EMBC.Responders.API.Controllers;
 
@@ -52,8 +53,8 @@ public class SupportsController : ControllerBase
             IssuedBy = request.IssuedBy
         });
 
-        var sameFileDuplicateDetectionEnabled = configuration.GetValue("features:SAMEFILE_DUPLICATEDETECTION", true);
-        var differentFileDuplicateDetectionEnabled = configuration.GetValue("features:DIFFERENTFILE_DUPLICATEDETECTION", true);
+        var sameFileDuplicateDetectionEnabled = configuration.GetValue(FeatureFlagKeys.SameFileDuplicateDetection, false);
+        var differentFileDuplicateDetectionEnabled = configuration.GetValue(FeatureFlagKeys.DifferentFileDuplicateDetection, false);
         var originalDuplicatedSupports = response.DuplicateSupports.ToList(); // Convert to List for AddRange support
         var duplicatedSupports = new List<DuplicateSupportResult>();
         if (sameFileDuplicateDetectionEnabled)
