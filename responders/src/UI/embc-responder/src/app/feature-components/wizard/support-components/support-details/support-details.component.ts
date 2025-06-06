@@ -29,7 +29,7 @@ import { MatSelect } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
-import { Subscription } from 'rxjs';
+import { firstValueFrom, Subscription } from 'rxjs';
 import { Support, SupportCategory, SupportStatus, SupportSubCategory } from 'src/app/core/api/models';
 import { EvacuationFileHouseholdMember } from 'src/app/core/api/models/evacuation-file-household-member';
 import { DialogContent } from 'src/app/core/models/dialog-content.model';
@@ -56,7 +56,9 @@ import { OtherTransportationComponent } from './details-type/other-transportatio
 import { ShelterAllowanceGroupComponent } from './details-type/shelter-allowance/shelter-allowance.component';
 import { TaxiTransportationComponent } from './details-type/taxi-transportation/taxi-transportation.component';
 import { SupportDetailsService } from './support-details.service';
-
+import { UserService } from 'src/app/core/services/user.service';
+import { DuplicateSupportModel } from 'src/app/core/models/duplicate-support.model';
+import { ConflictMessageScenario } from 'src/app/core/api/models/conflict-message-scenario';
 @Component({
   selector: 'app-support-details',
   templateUrl: './support-details.component.html',
@@ -118,6 +120,7 @@ export class SupportDetailsComponent implements OnInit, OnDestroy {
   supportListSubscription: Subscription;
   supportLimits: any;
   supportLimitsSubscription: Subscription;
+  userService: UserService;
 
   constructor(
     private router: Router,
@@ -587,71 +590,87 @@ export class SupportDetailsComponent implements OnInit, OnDestroy {
     const thisSupport = this.supportDetailsForm.getRawValue();
     const from = moment(this.dateConversionService.createDateTimeString(thisSupport.fromDate, thisSupport.fromTime));
     const to = moment(this.dateConversionService.createDateTimeString(thisSupport.toDate, thisSupport.toTime));
-    const category: SupportCategory =
-      SupportCategory[this.stepSupportsService.supportTypeToAdd.value] ||
-      this.mapSubCategoryToCategory(SupportSubCategory[this.stepSupportsService.supportTypeToAdd.value]);
     const members: EvacuationFileHouseholdMember[] = this.supportDetailsForm.get('members').value.map((m) => m.id);
 
-    const hasConflict = existingSupports.some((s) => {
-      const sFrom = moment(s.from);
-      const sTo = moment(s.to);
-      return (
-        s.status !== SupportStatus.Void &&
-        s.category === category &&
-        ((sFrom.isSameOrAfter(from) && sFrom.isSameOrBefore(to)) ||
-          (sTo.isSameOrAfter(from) && sTo.isSameOrBefore(to)) ||
-          (sFrom.isSameOrBefore(from) && sTo.isSameOrAfter(to)))
-      );
-    });
+    const supportCategory =
+      SupportSubCategory[this.stepSupportsService.supportTypeToAdd.value] ||
+      SupportCategory[this.stepSupportsService.supportTypeToAdd.value];
+    const duplicateSupportRequest = {
+      members,
+      toDate: to.toISOString(),
+      fromDate: from.toISOString(),
+      category: this.mapSupportTypeInverse(supportCategory),
+      fileId: this.evacueeSessionService?.evacFile?.id,
+      issuedBy: this.userService?.currentProfile?.userName
+    };
 
-    // Initial check for duplicate supports within the same ESS file
-    if (hasConflict) {
-      this.dialog
-        .open(DialogComponent, {
-          data: {
-            component: InformationDialogComponent,
-            content: globalConst.duplicateSupportMessage
-          },
-          width: '720px'
-        })
-        .afterClosed()
-        .subscribe((event) => {
-          if (event === 'confirm') {
-            this.addDelivery();
-          }
-        });
-    } else {
-      const supportCategory =
-        SupportSubCategory[this.stepSupportsService.supportTypeToAdd.value] ||
-        SupportCategory[this.stepSupportsService.supportTypeToAdd.value];
-      const duplicateSupportRequest = {
-        members,
-        toDate: to.toISOString(),
-        fromDate: from.toISOString(),
-        category: this.mapSupportTypeInverse(supportCategory)
-      };
-      this.addDelivery();
+    try {
+      // Get potential duplicates based on fuzzy search from API
+      const potentialDuplicateSupports = await firstValueFrom(
+        this.stepSupportsService.checkPossibleDuplicateSupports(duplicateSupportRequest)
+      );
+
+      // If there are potential duplicates, show a dialog to confirm
+      if (potentialDuplicateSupports.length > 0) {
+        const message: DialogContent = this.generateDuplicateSupportDialog(potentialDuplicateSupports);
+        this.dialog
+          .open(DialogComponent, {
+            data: {
+              component: InformationDialogComponent,
+              content: message
+            },
+            width: '720px'
+          })
+          .afterClosed()
+          .subscribe((event) => {
+            if (event === 'confirm') {
+              // If confirmed, add the delivery
+              this.addDelivery();
+            }
+          });
+        // If there are no potential duplicates found, add the delivery
+      } else {
+        this.addDelivery();
+      }
+    } catch (error) {
+      console.error('Error fetching duplicate supports: ', error);
+      return;
     }
   }
 
-  generateDuplicateSupportDialog(potentialDuplicateSupports: Support[], category: string): DialogContent {
-    const uniqueHouseholdMembers = new Map<string, string>();
-    potentialDuplicateSupports.forEach((s) => {
-      s.householdMembers.forEach((m) => {
-        uniqueHouseholdMembers.set(
-          m.firstName + m.lastName + m.dateOfBirth,
-          `<br><strong>Name:</strong> ${m.firstName} ${m.lastName} <br><strong>Date of Birth:</strong> ${m.dateOfBirth}`
-        );
-      });
-    });
+  generateDuplicateSupportDialog(potentialDuplicateSupports: DuplicateSupportModel[]): DialogContent {
+    if (potentialDuplicateSupports.length > 0) {
+      const evacueeDetails = potentialDuplicateSupports
+        .map(
+          (support) => `
+        <ul>
+          <li><strong>Name:</strong> ${support.supportMemberFirstName} ${support.supportMemberLastName}</li>
+          <li><strong>Date of Birth:</strong> ${support.supportMemberDOB}</li>
+          <li><strong>ESS File Number:</strong> ${support.essFileId}</li>
+          <li><strong>Support Period:</strong> [Start Date ${support.supportStartDate}] ${support.supportStartTime} - [${support.supportEndDate}] ${support.supportEndTime}</li>
+        </ul>`
+        )
+        .join('');
+
+      return {
+        title: '<span class="bold field-error">Duplicate Support Detected</span>',
+        text:
+          'The support you are attempting to issue overlaps with previously issued supports. Evacuees are not entitled to supports of the same type during overlapping dates and times. Overlapping supports may be denied by EMCR if not properly justified and are subject to review.' +
+          '<br/>The following evacuee(s) have already received the same support type during the overlapping period.' +
+          `<br/><br/><strong>Evacuee Details:</strong><br/>${evacueeDetails}` +
+          '<strong>Next Steps:</strong><br/>' +
+          `<li>Review the evacuee’s ESS files and previously issued supports to determine eligibility</li>` +
+          `<li>Edit the support to avoid an overlapping time period</li>` +
+          `<li>If proceeding with the overlapping support, provide justification in an ESS File Note</li>`,
+
+        cancelButton: 'Edit Support',
+        confirmButton: 'Continue and Issue Overlapping Support'
+      };
+    }
+
     return {
-      title: 'Possible Support Conflict',
-      text:
-        'The support you are trying to add may have conflicts with previously issued supports. The following evacuees received a ' +
-        category +
-        ' support during the same time period: <br>' +
-        Array.from(uniqueHouseholdMembers.values()).join('<br>') +
-        '.<br><br>Do you want to continue?',
+      title: '<span class="bold field-error">Potential Duplicate Support Detected</span>',
+      text: 'The support you are trying to add may have conflicts with previously issued supports.<br><br>Do you want to continue?',
 
       confirmButton: 'Yes, Continue',
       cancelButton: 'No, Cancel'

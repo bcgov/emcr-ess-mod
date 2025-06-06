@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace EMBC.ESS.Shared.Contracts.Events
 {
@@ -59,15 +60,25 @@ namespace EMBC.ESS.Shared.Contracts.Events
 
     public enum SupportType
     {
+        [Display(Name = "Food Groceries")]
         FoodGroceries = 174360000,
+        [Display(Name = "Food Restaurant")]
         FoodRestaurant = 174360001,
+        [Display(Name = "Shelter Hotel")]
         ShelterHotel = 174360002,
+        [Display(Name = "Shelter Billeting")]
         ShelterBilleting = 174360003,
+        [Display(Name = "Shelter Group")]
         ShelterGroup = 174360004,
+        [Display(Name = "Incidentals")]
         Incidentals = 174360005,
+        [Display(Name = "Clothing")]
         Clothing = 174360006,
+        [Display(Name = "Transportation Taxi")]
         TransporationTaxi = 174360007,
+        [Display(Name = "Transportation Other")]
         TransportationOther = 174360008,
+        [Display(Name = "Shelter Allowance")]
         ShelterAllowance = 174360009
     }
 }

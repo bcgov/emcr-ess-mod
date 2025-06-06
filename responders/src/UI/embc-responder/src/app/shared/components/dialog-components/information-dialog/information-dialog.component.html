@@ -1,31 +1,33 @@
-<div class="row">
-  <div id="dialog-content" class="col-md-12" [innerHTML]="content?.text"></div>
-</div>
+<div class="scrollable-container">
+  <div class="row">
+    <div id="dialog-content" class="col-md-12" [innerHTML]="content?.text"></div>
+  </div>
 
-<div class="row button-row justify-content-between">
-  @if (content?.cancelButton) {
-    <div class="col-md-6">
-      <button class="button-s button-width" mat-button (click)="cancel()">
-        {{ content?.cancelButton }}
-      </button>
-    </div>
-  }
-
-  @if (content?.confirmButton) {
-    <div class="col-md-6">
-      <button class="button-p button-width confirm-button" mat-button (click)="confirm()">
-        {{ content?.confirmButton }}
-      </button>
-    </div>
-  }
-</div>
-
-<div class="row">
-  <div class="col">
-    @if (content?.exitLink) {
-      <button class="btn btn-link exit-link" (click)="exit()">
-        {{ content?.exitLink }}
-      </button>
+  <div class="row button-row justify-content-between">
+    @if (content?.cancelButton) {
+      <div class="col-md-6">
+        <button class="button-s button-width" mat-button (click)="cancel()">
+          {{ content?.cancelButton }}
+        </button>
+      </div>
     }
+
+    @if (content?.confirmButton) {
+      <div class="col-md-6">
+        <button class="button-p button-width confirm-button" mat-button (click)="confirm()">
+          {{ content?.confirmButton }}
+        </button>
+      </div>
+    }
+  </div>
+
+  <div class="row">
+    <div class="col">
+      @if (content?.exitLink) {
+        <button class="btn btn-link exit-link" (click)="exit()">
+          {{ content?.exitLink }}
+        </button>
+      }
+    </div>
   </div>
 </div>

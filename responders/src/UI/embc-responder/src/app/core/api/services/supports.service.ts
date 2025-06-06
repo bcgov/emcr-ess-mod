@@ -11,6 +11,7 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { supportsGetDuplicateSupports, SupportsGetDuplicateSupports$Params } from '../fn/supports/supports-get-duplicate-supports';
 import { Support } from '../models';
+import { DuplicateSupportModel } from '../../models/duplicate-support.model';
 
 @Injectable({ providedIn: 'root' })
 export class SupportsService extends BaseService {
@@ -27,7 +28,7 @@ export class SupportsService extends BaseService {
      *
      * This method doesn't expect any request body.
      */
-    supportsGetDuplicateSupports$Response(params: SupportsGetDuplicateSupports$Params, context?: HttpContext): Observable<StrictHttpResponse<Support[]>> {
+    supportsGetDuplicateSupports$Response(params: SupportsGetDuplicateSupports$Params, context?: HttpContext): Observable<StrictHttpResponse<DuplicateSupportModel[]>> {
         return supportsGetDuplicateSupports(this.http, this.rootUrl, params, context);
     }
 
@@ -37,8 +38,7 @@ export class SupportsService extends BaseService {
      *
      * This method doesn't expect any request body.
      */
-    supportsGetDuplicateSupports(params: SupportsGetDuplicateSupports$Params, context?: HttpContext): Observable<Support[]> {
-        return this.supportsGetDuplicateSupports$Response(params, context).pipe(map((r: StrictHttpResponse<Support[]>): Support[] => r.body));
+    supportsGetDuplicateSupports(params: SupportsGetDuplicateSupports$Params, context?: HttpContext): Observable<DuplicateSupportModel[]> {
+        return this.supportsGetDuplicateSupports$Response(params, context).pipe(map((r: StrictHttpResponse<DuplicateSupportModel[]>): DuplicateSupportModel[] => r.body));
     }
-
 }

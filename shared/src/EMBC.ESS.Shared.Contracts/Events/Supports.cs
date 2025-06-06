@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Versioning;
 using System.Text.Json.Serialization;
 
 namespace EMBC.ESS.Shared.Contracts.Events
@@ -45,6 +46,19 @@ namespace EMBC.ESS.Shared.Contracts.Events
         public string Reason { get; set; }
     }
 
+    public class CreateSupportConflictCommandRequest : Command
+    {
+        public string[] Members { get; set; }
+        public string SupportId { get; set; }
+        public string FileId { get; set; }
+        public string IssuedBy { get; set; }
+    }
+
+    public class CreateSupportConflictCommandResult
+    {
+        public Guid Id { get; set; }
+    }
+
     /// <summary>
     /// query a print request's content
     /// </summary>
@@ -69,11 +83,31 @@ namespace EMBC.ESS.Shared.Contracts.Events
         public string FromDate { get; set; }
         public string ToDate { get; set; }
         public string[] Members { get; set; }
+        public string FileId { get; set; }
+        public string IssuedBy { get; set; }
+    }
+
+    public class DuplicateSupportResult
+    {
+        public string essFileId { get; set; }
+        public string supportStartDate { get; set; }
+        public string supportEndDate { get; set; }
+        public string supportStartTime { get; set; }
+        public string supportEndTime { get; set; }
+        public int duplicateSupportScenario { get; set; }
+        public string householdMemberFirstName { get; set; }
+        public string householdMemberLastName { get; set; }
+        public string supportMemberDOB { get; set; }
+        public string supportCategory { get; set; }
+        public string supportSubCategory { get; set; }
+        public string supportMemberFirstName { get; set; }
+        public string supportMemberLastName { get; set; }
+        public string householdMemberDOB { get; set; }
     }
 
     public class DuplicateSupportsQueryResult
     {
-        public IEnumerable<Support> DuplicateSupports { get; set; }
+        public IEnumerable<DuplicateSupportResult> DuplicateSupports { get; set; }
     }
 
     /// <summary>
