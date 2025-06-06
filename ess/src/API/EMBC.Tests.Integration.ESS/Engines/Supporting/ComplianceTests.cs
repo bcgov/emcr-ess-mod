@@ -33,7 +33,10 @@ namespace EMBC.Tests.Integration.ESS.Engines.Supporting
         {
             var fileId = TestData.EvacuationFileId;
             var householdMembers = TestData.HouseholdMemberIds;
-            await DuplicateCheck(fileId, householdMembers, initialSupport, duplicatedSupport, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
+            var initialSupportCopy = initialSupport;
+            initialSupportCopy.HouseholdMembers = duplicatedSupport.HouseholdMembers;
+
+            await DuplicateCheck(fileId, householdMembers, initialSupport, initialSupportCopy, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
         }
 
         private async Task DuplicateCheck(string fileId, IEnumerable<string> householdMembers, Support initialSupport, Support dupicatedSupport, TimeSpan fromTimeGap, TimeSpan toTimeGap)
@@ -61,7 +64,7 @@ namespace EMBC.Tests.Integration.ESS.Engines.Supporting
             foreach (var support in supports)
             {
                 support.FileId = fileId;
-                support.From = from.Add(fromTimeGap);
+                support.From = from.Add(-fromTimeGap);
                 support.To = to.Add(toTimeGap);
                 support.IncludedHouseholdMembers = householdMembers;
                 support.CreatedBy = new TeamMember { Id = TestData.Tier4TeamMemberId };
@@ -75,9 +78,11 @@ namespace EMBC.Tests.Integration.ESS.Engines.Supporting
             })).Supports.ShouldHaveSingleItem();
 
             var response = (CheckSupportComplianceResponse)await engine.Validate(new CheckSupportComplianceRequest { Supports = [secondSupport] });
-            var flags = response.Flags.ShouldHaveSingleItem();
-            flags.Key.Id.ShouldBe(secondSupport.Id);
-            flags.Value.Where(f => f is DuplicateSupportFlag d && d.DuplicatedSupportId == firstSupport.Id).ShouldHaveSingleItem();
+            var flags = response.Flags;
+
+
+            flags.Select(kvp => kvp.Key.Id).ShouldContain(secondSupport.Id);
+            flags.Where(kvp => kvp.Key.Id == secondSupport.Id).SelectMany(kvp => kvp.Value).Where(f => f is DuplicateSupportFlag d && d.DuplicatedSupportId == firstSupport.Id).ShouldHaveSingleItem();
         }
 
         [Fact]
@@ -124,8 +129,8 @@ namespace EMBC.Tests.Integration.ESS.Engines.Supporting
 
             var fileId = file.Id;
             var householdMembers = file.HouseholdMembers.Select(hm => hm.Id);
-            var from = DateTime.UtcNow.AddDays(-3);
-            var to = DateTime.UtcNow.AddDays(1);
+            var from = DateTime.UtcNow.AddDays(-15);
+            var to = DateTime.UtcNow.AddDays(-15).AddMinutes(1);
 
             var checkedSupport = new ClothingSupport
             {

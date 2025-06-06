@@ -664,7 +664,7 @@ export class SupportDetailsComponent implements OnInit, OnDestroy {
           `<li>If proceeding with the overlapping support, provide justification in an ESS File Note</li>`,
 
         cancelButton: 'Edit Support',
-        confirmButton: 'Continue and Issue Overlapping Support'
+        confirmButton: globalConst.DuplicateSupportPopupProceedMessage
       };
     }
 

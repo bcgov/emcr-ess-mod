@@ -666,3 +666,6 @@ export const duplicateHouseholdMemberWarning: DialogContent = {
 };
 
 export const noAssistanceRequired = 'Household currently does not require assistance.';
+export const confirmDuplicateSupportMessage =
+  'I have reviewed the evacuee details and confirm that they are not the same person';
+export const DuplicateSupportPopupProceedMessage = 'Continue and Issue Overlapping Support';
