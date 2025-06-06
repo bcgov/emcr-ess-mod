@@ -241,7 +241,6 @@ namespace EMBC.ESS.Resources.Supports
                                     householdMemberDOB = member.era_dateofbirth.Value.ToString()
 
                                 });
-
                             }
                         }
                     }
