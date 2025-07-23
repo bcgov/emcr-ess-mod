@@ -6,7 +6,7 @@
   },
 
   "/env/info.json": {
-    "target": "https://dev-era-responders.apps.silver.devops.gov.bc.ca",
+    "target": "https://dev-sup-era-responders.apps.silver.devops.gov.bc.ca",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"

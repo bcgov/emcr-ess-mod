@@ -45,6 +45,7 @@ namespace EMBC.Utilities.Messaging.Grpc
                     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, opts =>
                     {
                         configurationServices.Configuration.GetSection("messaging:oauth").Bind(opts);
+                        // opts.MetadataAddress = "<Introspection-authority-OIDC>/.well-known/openid-configuration";
 
                         opts.TokenValidationParameters = new TokenValidationParameters
                         {

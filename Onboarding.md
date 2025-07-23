@@ -166,6 +166,32 @@ npm install
 npm run start    # Runs with local API configuration
 ```
 
+### Troubleshooting JWT/OIDC Authentication Errors
+
+If you encounter errors like:
+
+```
+HTTP POST /EMBC.Utilities.Messaging.Grpc.Dispatcher/Dispatch responded 401
+error authenticating token
+Microsoft.IdentityModel.Tokens.SecurityTokenInvalidIssuerException: IDX10204: Unable to validate issuer. validationParameters.ValidIssuer is null or whitespace AND validationParameters.ValidIssuers is null or empty.
+```
+
+or
+
+```
+Microsoft.IdentityModel.Tokens.SecurityTokenSignatureKeyNotFoundException: IDX10500: Signature validation failed. No security keys were provided to validate the signature.
+```
+
+**Solution:**
+
+- The application must be able to bind these values to the JwtBearer authentication options. If these are missing or not set, authentication will fail with the above errors.
+
+- In code, you may see this line:
+  ```csharp
+  opts.MetadataAddress = "https://<Introspection-authority-OIDC>/.well-known/openid-configuration";
+  ```
+
+
 ## Project Structure
 
 ```
