@@ -129,7 +129,7 @@ export class SelfServeSupportDetailsFormComponent {
   constructor(
     private dialog: MatDialog,
     public evacuationFileDataService: EvacuationFileDataService
-  ) {}
+  ) { }
 
   private createSelfServeShelterAllowanceSupportForm(
     selfServeSupport: SelfServeShelterAllowanceSupport,
@@ -180,6 +180,18 @@ export class SelfServeSupportDetailsFormComponent {
     selfServeSupportFormGroup: FormGroup<SelfServeFoodRestaurantSupportForm>
   ) {
     const dates = selfServeSupport.meals.map((m) => moment(m.date, 'YYYY-MM-DD'));
+    var tooManyMeals = false;
+    var maxMeals = 0;
+    selfServeSupport.meals.forEach((meal) => {
+      if (meal.breakfast) maxMeals++;
+      if (meal.lunch) maxMeals++;
+      if (meal.dinner) maxMeals++;
+    });
+    if (maxMeals > 9) {
+      tooManyMeals = true;
+      maxMeals = 9;
+    }
+
     selfServeSupport.includedHouseholdMembers.forEach((p) => {
       selfServeSupportFormGroup.controls.includedHouseholdMembers.push(this.createSupportPersonFormGroup(p));
     });
@@ -198,47 +210,69 @@ export class SelfServeSupportDetailsFormComponent {
         const checkedCount: Record<string, number> = {
           breakfast: 0,
           lunch: 0,
-          dinner: 0
+          dinner: 0,
+          total: 0
         };
 
         selfServeSupportFormGroup.controls.mealTypes.controls.forEach((meal) => {
-          if (meal.controls.breakfast.value === true) checkedCount.breakfast++;
+          if (meal.controls.breakfast.value === true && tooManyMeals === false) {
+            checkedCount.breakfast++;
+            checkedCount.total++;
+          }
           else if (
-            originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].breakfast === true ||
-            originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].breakfast === false
-          )
+            originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].breakfast === true
+          ) {
+            if (tooManyMeals) {
+              meal.controls.breakfast.setValue(false, { emitEvent: false });
+              tooManyMeals = false;
+            }
             unCheckedControls.breakfast.push(meal.controls.breakfast);
+          }
 
-          if (meal.controls.lunch.value === true) checkedCount.lunch++;
+          if (meal.controls.lunch.value === true && tooManyMeals === false) {
+            checkedCount.lunch++;
+            checkedCount.total++;
+          }
           else if (
-            originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].lunch === true ||
-            originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].lunch === false
-          )
+            originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].lunch === true
+          ) {
+            if (tooManyMeals) {
+              meal.controls.breakfast.setValue(false, { emitEvent: false });
+              tooManyMeals = false;
+            }
             unCheckedControls.lunch.push(meal.controls.lunch);
+          }
 
-          if (meal.controls.dinner.value === true) checkedCount.dinner++;
+          if (meal.controls.dinner.value === true && tooManyMeals === false) {
+            checkedCount.dinner++;
+            checkedCount.total++;
+          }
           else if (
-            originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].dinner === true ||
-            originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].dinner === false
-          )
+            originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].dinner === true
+          ) {
+            if (tooManyMeals) {
+              meal.controls.breakfast.setValue(false, { emitEvent: false });
+              tooManyMeals = false;
+            }
             unCheckedControls.dinner.push(meal.controls.dinner);
+          }
         });
 
         // @Note: Only 3 dates can be checked per meal type
         // check count of selected checkboxes are 3 then disable the first unchecked
-        if (checkedCount.breakfast >= 3) {
+        if (checkedCount.breakfast >= 3 || checkedCount.total >= maxMeals) {
           unCheckedControls.breakfast.forEach((c) => c.disable({ emitEvent: false }));
         } else {
           unCheckedControls.breakfast.forEach((c) => c.enable({ emitEvent: false }));
         }
 
-        if (checkedCount.lunch >= 3) {
+        if (checkedCount.lunch >= 3 || checkedCount.total >= maxMeals) {
           unCheckedControls.lunch.forEach((c) => c.disable({ emitEvent: false }));
         } else {
           unCheckedControls.lunch.forEach((c) => c.enable({ emitEvent: false }));
         }
 
-        if (checkedCount.dinner >= 3) {
+        if (checkedCount.dinner >= 3 || checkedCount.total >= maxMeals) {
           unCheckedControls.dinner.forEach((c) => c.disable({ emitEvent: false }));
         } else {
           unCheckedControls.dinner.forEach((c) => c.enable({ emitEvent: false }));
@@ -254,9 +288,9 @@ export class SelfServeSupportDetailsFormComponent {
       selfServeSupportFormGroup.controls.mealTypes.push(
         new FormGroup<SelfServeSupportDayMealForm>({
           date: new FormControl(date),
-          breakfast: new FormControl({ value: m.breakfast, disabled: m.breakfast !== true && m.breakfast !== false }),
-          lunch: new FormControl({ value: m.lunch, disabled: m.lunch !== true && m.lunch !== false }),
-          dinner: new FormControl({ value: m.dinner, disabled: m.dinner !== true && m.dinner !== false })
+          breakfast: new FormControl({ value: m.breakfast, disabled: m.breakfast !== true }),
+          lunch: new FormControl({ value: m.lunch, disabled: m.lunch !== true }),
+          dinner: new FormControl({ value: m.dinner, disabled: m.dinner !== true })
         })
       );
     });
@@ -282,22 +316,19 @@ export class SelfServeSupportDetailsFormComponent {
         } else {
           selfServeSupportFormGroup.controls.mealTypes.controls.forEach((meal) => {
             if (
-              originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].breakfast === true ||
-              originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].breakfast === false
+              originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].breakfast === true
             ) {
               meal.controls.breakfast.enable({ emitEvent: false });
             }
 
             if (
-              originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].lunch === true ||
-              originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].lunch === false
+              originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].lunch === true
             ) {
               meal.controls.lunch.enable({ emitEvent: false });
             }
 
             if (
-              originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].dinner === true ||
-              originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].dinner === false
+              originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].dinner === true
             ) {
               meal.controls.dinner.enable({ emitEvent: false });
             }

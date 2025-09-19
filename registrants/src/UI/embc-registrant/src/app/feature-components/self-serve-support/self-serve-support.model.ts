@@ -26,9 +26,9 @@ export type SupportDayFormControl = {
 
 export interface SelfServeSupportDayMealForm extends Omit<SupportDayFormControl, 'date'> {
   date: FormControl<moment.Moment>;
-  breakfast: FormControl<boolean>;
-  lunch: FormControl<boolean>;
-  dinner: FormControl<boolean>;
+  breakfast?: FormControl<boolean | null>;
+  lunch?: FormControl<boolean | null>;
+  dinner?: FormControl<boolean | null>;
 }
 
 export type SelfServeFoodFundsFor = SelfServeSupportType.FoodGroceries | SelfServeSupportType.FoodRestaurant | null;

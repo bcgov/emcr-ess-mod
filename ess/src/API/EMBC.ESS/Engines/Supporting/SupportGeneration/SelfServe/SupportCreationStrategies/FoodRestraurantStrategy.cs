@@ -22,15 +22,26 @@ internal class FoodRestraurantStrategy : ISelfServeSupportCreationStrategy<SelfS
     private static IEnumerable<SupportDayMeals> CalculateMealPlan(DateTime from, DateTime to)
     {
         var meals = new Dictionary<DateOnly, SupportDayMeals>();
+        int maxBreakfasts = 3;
+        int maxLunches = 3;
+        int maxDinners = 3;
 
         var startingTime = from;
-        var endingTime = to;
+        var endingTime = to;    
 
-        // allow previous day dinner if breakfast is selected for first day
-        if (startingTime.Hour < 11)
+        DateOnly firstDay = DateOnly.FromDateTime(startingTime);
+
+        // allow previous meal if occurs in same first day
+        if (startingTime.Hour >= 11 && startingTime.Hour < 15)
         {
-            var prevDay = DateOnly.FromDateTime(from.AddDays(-1));
-            meals.Add(prevDay, new SupportDayMeals(prevDay) { Dinner = false });
+            meals.Add(firstDay, new SupportDayMeals(firstDay) { Breakfast = true });
+            maxBreakfasts++;
+        }
+        else if (startingTime.Hour >= 15 && startingTime.Hour <= 24 ||
+                 startingTime.Hour >= 0 && startingTime.Hour < 1) 
+        {
+            meals.Add(firstDay, new SupportDayMeals(firstDay) { Lunch = true });
+            maxLunches++;
         }
 
         while (startingTime < endingTime)
@@ -40,17 +51,17 @@ internal class FoodRestraurantStrategy : ISelfServeSupportCreationStrategy<SelfS
             switch (startingTime.Hour)
             {
                 case >= 1 and < 11:
-                    meal.Breakfast = meals.Values.Count(m => m.Breakfast == true) < 3;
+                    meal.Breakfast = meals.Values.Count(m => m.Breakfast == true) < maxBreakfasts;
                     startingTime = new DateTime(day, new TimeOnly(11, 1), DateTimeKind.Unspecified);
                     break;
 
                 case >= 11 and < 15:
-                    meal.Lunch = meals.Values.Count(m => m.Lunch == true) < 3;
+                    meal.Lunch = meals.Values.Count(m => m.Lunch == true) < maxLunches;
                     startingTime = new DateTime(day, new TimeOnly(15, 1), DateTimeKind.Unspecified);
                     break;
 
                 case >= 15 and <= 24 or >= 0 and < 1:
-                    meal.Dinner = meals.Values.Count(m => m.Dinner == true) < 3;
+                    meal.Dinner = meals.Values.Count(m => m.Dinner == true) < maxDinners;
                     startingTime = new DateTime(day.AddDays(1), new TimeOnly(1, 1), DateTimeKind.Unspecified);
                     break;
             }
