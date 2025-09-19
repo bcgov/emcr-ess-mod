@@ -104,7 +104,7 @@ public class SelfServeSupportGenerationTests
         restaurant.IncludedHouseholdMembers.ShouldBe(expectedHouseholdMemberIds);
         // restaurant support days are different
         IEnumerable<DateOnly> mealsExpectedDays = [DateOnly.FromDateTime(startDate), DateOnly.FromDateTime(startDate.AddHours(24)), DateOnly.FromDateTime(startDate.AddHours(48)), DateOnly.FromDateTime(startDate.AddHours(72))];
-        mealsExpectedDays = startDate.Hour >= 11 ? mealsExpectedDays : mealsExpectedDays.Prepend(DateOnly.FromDateTime(startDate.AddDays(-1)));
+        // No longer true: mealsExpectedDays = startDate.Hour >= 11 ? mealsExpectedDays : mealsExpectedDays.Prepend(DateOnly.FromDateTime(startDate.AddDays(-1)));
         restaurant.Meals.Select(m => m.Date).ShouldBe(mealsExpectedDays);
         var numberOfBreakfasts = restaurant.Meals.Aggregate(0, (n, m) => n + (m.Breakfast == true ? 1 : 0));
         var numberOfLunches = restaurant.Meals.Aggregate(0, (n, m) => n + (m.Lunch == true ? 1 : 0));

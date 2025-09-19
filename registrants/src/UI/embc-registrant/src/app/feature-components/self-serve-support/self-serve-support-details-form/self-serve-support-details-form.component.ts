@@ -129,7 +129,7 @@ export class SelfServeSupportDetailsFormComponent {
   constructor(
     private dialog: MatDialog,
     public evacuationFileDataService: EvacuationFileDataService
-  ) { }
+  ) {}
 
   private createSelfServeShelterAllowanceSupportForm(
     selfServeSupport: SelfServeShelterAllowanceSupport,
@@ -218,10 +218,7 @@ export class SelfServeSupportDetailsFormComponent {
           if (meal.controls.breakfast.value === true && tooManyMeals === false) {
             checkedCount.breakfast++;
             checkedCount.total++;
-          }
-          else if (
-            originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].breakfast === true
-          ) {
+          } else if (originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].breakfast === true) {
             if (tooManyMeals) {
               meal.controls.breakfast.setValue(false, { emitEvent: false });
               tooManyMeals = false;
@@ -232,10 +229,7 @@ export class SelfServeSupportDetailsFormComponent {
           if (meal.controls.lunch.value === true && tooManyMeals === false) {
             checkedCount.lunch++;
             checkedCount.total++;
-          }
-          else if (
-            originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].lunch === true
-          ) {
+          } else if (originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].lunch === true) {
             if (tooManyMeals) {
               meal.controls.breakfast.setValue(false, { emitEvent: false });
               tooManyMeals = false;
@@ -246,10 +240,7 @@ export class SelfServeSupportDetailsFormComponent {
           if (meal.controls.dinner.value === true && tooManyMeals === false) {
             checkedCount.dinner++;
             checkedCount.total++;
-          }
-          else if (
-            originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].dinner === true
-          ) {
+          } else if (originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].dinner === true) {
             if (tooManyMeals) {
               meal.controls.breakfast.setValue(false, { emitEvent: false });
               tooManyMeals = false;
@@ -315,21 +306,15 @@ export class SelfServeSupportDetailsFormComponent {
           });
         } else {
           selfServeSupportFormGroup.controls.mealTypes.controls.forEach((meal) => {
-            if (
-              originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].breakfast === true
-            ) {
+            if (originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].breakfast === true) {
               meal.controls.breakfast.enable({ emitEvent: false });
             }
 
-            if (
-              originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].lunch === true
-            ) {
+            if (originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].lunch === true) {
               meal.controls.lunch.enable({ emitEvent: false });
             }
 
-            if (
-              originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].dinner === true
-            ) {
+            if (originalMealSupportsDraft[meal.controls.date.value.format('YYYY-MM-DD')].dinner === true) {
               meal.controls.dinner.enable({ emitEvent: false });
             }
           });
